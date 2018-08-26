@@ -78,6 +78,7 @@ int keypad_tick (int state) {
 			case '\0':
 			break;
 			case 'A':
+			LCD_ClearScreen();
 			selection = 1;
 			
 			break;
