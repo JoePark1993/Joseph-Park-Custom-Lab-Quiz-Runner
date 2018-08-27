@@ -7,7 +7,11 @@
 #include "keypad.h"
 #include "menu.h"
 #include "gameplay.h"
+#include "food.h"
+#include "led.h"
 #include <string.h>
+#include <time.h>
+#include <stdlib.h>
 
 unsigned short numTasks = 2;
 unsigned char A = 0x00;
@@ -36,21 +40,11 @@ typedef struct _task {
 
 
 
-char* from_key = " ";
-
-
-	
-
+char* from_key = " ";	
 unsigned char in;
-
 unsigned char scorebool = 0;
 unsigned char charbool = 0;
-
-
 unsigned char map = 32;
-
-
-
 unsigned char in;
 
 
@@ -62,7 +56,9 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00; // PORTB set to output, outputs init 0s
 	DDRC = 0xF0; PORTC = 0x0F; // PC7..4 outputs init 0s, PC3..0 inputs init 1s
 	DDRD = 0xFF; PORTD = 0xFF;
-	static task task1, gameplay,map, task2;
+	static task task1, gameplay,map,food,led, task2;
+	time_t t;
+	srand((unsigned) time(&t));
 	LCD_build();
 	task1.state = keypad_state;
 	task1.period = 250;
@@ -79,18 +75,28 @@ int main(void)
 	map.elapsedTime = 0;
 	map.TickFct = &map_tick;
 	
+	food.state = food_state;
+	food.period = 250;
+	food.elapsedTime = 0;
+	food.TickFct = &food_tick;
+	
+	led.state = led_state;
+	led.period = 250;
+	led.elapsedTime = 0;
+	led.TickFct = &LED_tick;
+	
 	LCD_init();
 
 	in = 0;
 	
-	task *tasks[] = { &task1, &gameplay, &map };
+	task *tasks[] = { &task1, &gameplay, &map, &food, &led };
 	
 	TimerSet(1);
 	TimerOn();
 	unsigned short i;
 	while(1) {
 		A = ~PINA;
-		for ( i = 0; i < 3; i++ ) {
+		for ( i = 0; i < 5; i++ ) {
 			// Task is ready to tick
 			if ( tasks[i]->elapsedTime == tasks[i]->period ) {
 				// Setting next state for task
