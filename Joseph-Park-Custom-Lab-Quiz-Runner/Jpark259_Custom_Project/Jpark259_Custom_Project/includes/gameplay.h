@@ -3,7 +3,7 @@
 
 enum game_states {wait,player,movement,question,clears} game_state = 0;
 enum map_states {waitmap, object, roundover,clear} map_state = 0;
-#define gametime 10
+#define gametime 80
 #define questiontime 10
 #define up 1
 #define down 17
@@ -103,10 +103,8 @@ int gameplay_tick(int state){
 			LCD_WriteData(1);
 			LCD_Cursor_Off();
 			initial = position;
-			PORTB = 0x20;
 			break;
 		case question:
-			PORTB = 0x00;
 			foodout = 0;
 			break;
 		case clears:

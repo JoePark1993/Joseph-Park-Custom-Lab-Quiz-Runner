@@ -15,8 +15,8 @@ int food_tick(int state){
 			}
 			break;
 		case foodtime:
-			if(((rand() % 4) == 0) && foodout == 1 && foodtotal !=14){
-				food[foodtotal] = 16;
+			if(((rand() % 4) == 3) && foodout == 1 && foodtotal !=14){
+				food[foodtotal] = 17;
 				foodtotal++;
 			} else if(((rand() % 4) == 1) && foodout == 1 && foodtotal != 14) {
 				food[foodtotal] = 32;
@@ -33,9 +33,22 @@ int food_tick(int state){
 	}
 	switch(state){
 		case waitfood:
+			for(unsigned char d = 0; d < 15; d++){
+				food[d] = 0;
+			}
 			foodtotal = 0;
 			break;
 		case foodtime:
+			for(unsigned char g = 0; g < 15; g++){
+				LCD_Cursor(food[g]);
+				LCD_WriteData(2);
+				LCD_Cursor_Off();
+			}
+			for(unsigned char h = 0; h < 15; h++){
+				LCD_Cursor(food[h]+1);
+				LCD_WriteData(' ');
+				LCD_Cursor_Off;
+			}
 			break;
 		default:
 			state = waitfood;
