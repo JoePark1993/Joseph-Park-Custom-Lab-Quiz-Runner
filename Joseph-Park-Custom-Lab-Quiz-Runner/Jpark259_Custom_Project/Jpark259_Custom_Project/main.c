@@ -8,7 +8,6 @@
 #include "menu.h"
 #include "gameplay.h"
 #include "food.h"
-#include "led.h"
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
@@ -80,11 +79,6 @@ int main(void)
 	food.elapsedTime = 0;
 	food.TickFct = &food_tick;
 	
-	led.state = led_state;
-	led.period = 250;
-	led.elapsedTime = 0;
-	led.TickFct = &LED_tick;
-	
 	LCD_init();
 
 	in = 0;
@@ -96,7 +90,7 @@ int main(void)
 	unsigned short i;
 	while(1) {
 		A = ~PINA;
-		for ( i = 0; i < 5; i++ ) {
+		for ( i = 0; i < 4; i++ ) {
 			// Task is ready to tick
 			if ( tasks[i]->elapsedTime == tasks[i]->period ) {
 				// Setting next state for task

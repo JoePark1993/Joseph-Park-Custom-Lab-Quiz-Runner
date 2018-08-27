@@ -1,9 +1,11 @@
 #ifndef FOOD_H
 #define FOOD_H
 
+
 enum food_states {waitfood,foodtime} food_state = 0;
 unsigned char foodtotal = 14;
 unsigned char food[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+unsigned char last = 0;
 
 int food_tick(int state){
 	switch(state){
@@ -28,6 +30,13 @@ int food_tick(int state){
 			for(unsigned char f = 0; f < 15; f++){
 				food[f] -=1;
 			}
+			for(unsigned char hit = 0; hit < 15; hit++){
+				if(position == food[hit]){
+					last = hit;
+					++scores;
+					food[hit] = 0;
+				}
+			}
 			state = foodtime;
 			break;
 	}
@@ -40,9 +49,15 @@ int food_tick(int state){
 			break;
 		case foodtime:
 			for(unsigned char g = 0; g < 15; g++){
-				LCD_Cursor(food[g]);
-				LCD_WriteData(2);
-				LCD_Cursor_Off();
+				if(food[g] == 0){
+					LCD_Cursor(position+1);
+					LCD_WriteData(' ');
+					LCD_Cursor_Off();
+				} else {
+					LCD_Cursor(food[g]);
+					LCD_WriteData(1);
+					LCD_Cursor_Off();
+				}
 			}
 			for(unsigned char h = 0; h < 15; h++){
 				LCD_Cursor(food[h]+1);

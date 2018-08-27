@@ -3,16 +3,13 @@
 
 enum game_states {wait,player,movement,question,clears} game_state = 0;
 enum map_states {waitmap, object, roundover,clear} map_state = 0;
-#define gametime 80
+#define gametime 40
 #define questiontime 10
 #define up 1
 #define down 17
 
 //FOOD RELEASE
 unsigned char foodout = 0;
-
-//LED GAME
-unsigned char led_bool = 0;
 unsigned char scores = 0;
 
 //OBJECT SCROLLING & LOCATION
@@ -27,7 +24,6 @@ unsigned char position = 1;
 unsigned char initial = 1;
 unsigned char lastlocation = 0;
 unsigned char currlocation = 0;
-unsigned char hit = 0;
 
 int gameplay_tick(int state){
 	switch(state){
@@ -72,6 +68,7 @@ int gameplay_tick(int state){
 					}
 				break;
 			}
+			
 			state = movement;
 			break;
 		case question:
@@ -111,8 +108,6 @@ int gameplay_tick(int state){
 			initial = 1;
 			position = 1;
 			foodout = 1;
-			led_bool = 0;
-			hit = 0;
 			break;
 		default:
 			state = waitmap;
@@ -163,12 +158,10 @@ int map_tick (int state){
 			foodout = 1;
 			break;
 		case roundover:
-			LCD_DisplayString(1,"Hit the middle LED!");
+			LCD_WriteData( scores + '0');
 			foodout = 0;
-			led_bool = 1;
 			break;
 		case clear:
-			led_bool = 0;
 			foodout = 1;
 			LCD_ClearScreen();
 			break;
