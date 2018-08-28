@@ -22,30 +22,35 @@ int keypad_tick (int state) {
 		case menu:
 		if(selection == 1){
 			selection = 0;
+			gamebool = 1;
 			state = game;
-			} else if (selection == 2){
+		} else if (selection == 2){
 			selection = 0;
 			state = score;
-			} else if (selection == 3){
+		} else if (selection == 3){
 			selection = 0;
 			state = character;
-			} else {
-			state = menu;
-		}
+		} else if (selection == 0 && gamebool == 0) {
+		PORTB = 0x04;
+		state = menu;
+	}
 		break;
 		case game:
+
 		selection = 0;
-		state = game;
+		if(gamebool == 1){
+			state = game;
+		} else if (gamebool == 0){
+			state = menu;
+		}
+		
 		break;
 		case score:
-		selection = 0;
-		break;
+			selection = 0;
+			break;
 		case character:
-		selection = 0;
-		break;
-		default:
-		state = menu;
-		break;
+			selection = 0;
+			break;
 	}
 	
 	switch(state) {
@@ -71,6 +76,7 @@ int keypad_tick (int state) {
 		
 		break;
 		case menu:
+		PORTB = 0x01;
 		LCD_DisplayString(1,"A-Play! B-Score  C-Character");
 		LCD_Cursor_Off();
 		x = GetKeypadKey();
@@ -87,14 +93,11 @@ int keypad_tick (int state) {
 			break;
 			case 'C':
 			selection = 3;
-			default:
-			LCD_DisplayString(1,"A-Play! B-Score  C-Character");
-			LCD_Cursor_Off();
 			break;
 		}
 		break;
 		case game:
-		gamebool = 1;
+			PORTB = 0x04;
 		break;
 		case score:
 		LCD_DisplayString(1,"SCORE");
