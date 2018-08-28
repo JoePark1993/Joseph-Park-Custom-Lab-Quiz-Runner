@@ -1,8 +1,7 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
 
-enum game_states {wait,player,movement,question,clears} game_state = 0;
-enum map_states {waitmap, object, roundover,clear} map_state = 0;
+enum game_states {wait,player,movement,lose,clears} game_state = 0;
 #define gametime 40
 #define questiontime 10
 #define up 1
@@ -35,60 +34,57 @@ int gameplay_tick(int state){
 			}
 			break;
 		case player:
-			j++;
+			foodout = 1;
 			state = movement;
 			break;
 		case movement:
-			j++;
-			if(j == gametime){
-				j = 0;
-				state = question;
-				break;
+			if(gamebool == 1){
+				x = GetKeypadKey();
+				switch(x){
+					case '2':
+						if(initial <= 32 && initial >= 17){
+							position -= 16;
+						}
+					break;
+					case'5':
+						if(initial >= 1 && initial <= 16){
+							position += 16;
+						}
+					break;
+					case'6':
+						if(initial < 32){
+							position += 1;
+						}
+					break;
+					case'4':
+						if(initial > 1){
+							position -= 1;
+						}
+					break;
+				}
+				state = movement;
+			} else if (gamebool == 0){
+				state = lose;
 			}
-			x = GetKeypadKey();
-			switch(x){
-				case '2':
-					if(initial <= 32 && initial >= 17){
-						position -= 16;
-					}
-				break;
-				case'5':
-					if(initial >= 1 && initial <= 16){
-						position += 16;
-					}
-				break;
-				case'6':
-					if(initial < 32){
-						position += 1;
-					}
-				break;
-				case'4':
-					if(initial > 1){
-						position -= 1;
-					}
-				break;
-			}
-			
-			state = movement;
 			break;
-		case question:
-			j++;
-			if(j != questiontime){
-				state = question;
-			} else {
-				j = 0;
-				state = clears;
-			}
+		case lose:
+		foodout = 0;
+		i++;
+		if(i == 10){
+			i = 0;
+			state = clears;
+		} else {
+			state = lose;
+		}
 			break;
 		case clears:
-			state = player;
+			state = wait;
 			break;
 	}
 	switch(state){
-		case waitmap:
+		case wait:
 			break;
 		case player:
-			foodout = 1;      //FOOD RELEASE
 			LCD_Cursor(initial);
 			LCD_WriteData(1);
 			LCD_Cursor_Off();
@@ -101,71 +97,16 @@ int gameplay_tick(int state){
 			LCD_Cursor_Off();
 			initial = position;
 			break;
-		case question:
-			foodout = 0;
+		case lose:
+			LCD_DisplayString(1,"LOSE");
 			break;
 		case clears:
 			initial = 1;
 			position = 1;
-			foodout = 1;
-			break;
-		default:
-			state = waitmap;
-			break;
-	}
-	return state;
-}
-
-int map_tick (int state){
-	switch(state){
-		case waitmap:
-			if(gamebool == 1){
-				state = object;
-			} else {
-				state = wait;
-			}
-			break;
-		case object:
-			i++;
-			if(i != gametime){
-				state = object;
-			} else {
-				i = 0;
-				index = 32;
-				state = roundover;
-			}
-			break;
-		case roundover:
-			i++;
-			if(i != questiontime){
-				state = roundover;
-			} else {
-				i = 0;
-				state = clear;
-			}
-			break;
-		case clear:
-			state = object;
+			foodout = 0;
 			break;
 		default:
 			state = wait;
-			break;
-	}
-	switch(state){
-		case wait:
-			break;
-		case object:
-			foodout = 1;
-			break;
-		case roundover:
-			LCD_WriteData( scores + '0');
-			foodout = 0;
-			break;
-		case clear:
-			foodout = 1;
-			LCD_ClearScreen();
-			break;
-		default:
 			break;
 	}
 	return state;

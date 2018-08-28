@@ -55,7 +55,7 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00; // PORTB set to output, outputs init 0s
 	DDRC = 0xF0; PORTC = 0x0F; // PC7..4 outputs init 0s, PC3..0 inputs init 1s
 	DDRD = 0xFF; PORTD = 0xFF;
-	static task task1, gameplay,map,food,led, task2;
+	static task task1, gameplay,food, task2;
 	time_t t;
 	srand((unsigned) time(&t));
 	LCD_build();
@@ -69,11 +69,6 @@ int main(void)
 	gameplay.elapsedTime = 0;
 	gameplay.TickFct = &gameplay_tick;
 	
-	map.state = map_state;
-	map.period = 250;
-	map.elapsedTime = 0;
-	map.TickFct = &map_tick;
-	
 	food.state = food_state;
 	food.period = 250;
 	food.elapsedTime = 0;
@@ -83,14 +78,14 @@ int main(void)
 
 	in = 0;
 	
-	task *tasks[] = { &task1, &gameplay, &map, &food, &led };
+	task *tasks[] = { &task1, &gameplay, &food };
 	
 	TimerSet(1);
 	TimerOn();
 	unsigned short i;
 	while(1) {
 		A = ~PINA;
-		for ( i = 0; i < 4; i++ ) {
+		for ( i = 0; i < 3; i++ ) {
 			// Task is ready to tick
 			if ( tasks[i]->elapsedTime == tasks[i]->period ) {
 				// Setting next state for task

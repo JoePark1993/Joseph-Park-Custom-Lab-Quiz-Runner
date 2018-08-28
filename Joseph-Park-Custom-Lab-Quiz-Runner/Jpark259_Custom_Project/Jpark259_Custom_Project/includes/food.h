@@ -2,71 +2,101 @@
 #define FOOD_H
 
 
-enum food_states {waitfood,foodtime} food_state = 0;
+enum food_states {waitfood,display, shift} food_state = 0;
 unsigned char foodtotal = 14;
-unsigned char food[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+unsigned char food[15] = {5,12,0,0,0,0,15,0,0,0,30,0,0,20,0};
+unsigned char poison[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 unsigned char last = 0;
 
 int food_tick(int state){
 	switch(state){
 		case waitfood:
 			if(foodout == 0){
+				for(unsigned char f = 0; f<15;f++){
+					if((rand()%6)==1){
+						food[f] = (rand()%33);
+					} else if ((rand()%10) == 1){
+						poison[f] = (rand() % 33);
+					} else {
+						food[f] = 0;
+					}
+				}
 				state = waitfood;
 			} else {
-				state = foodtime;
+				state = display;
 			}
 			break;
-		case foodtime:
-			if(((rand() % 4) == 3) && foodout == 1 && foodtotal !=14){
-				food[foodtotal] = 17;
-				foodtotal++;
-			} else if(((rand() % 4) == 1) && foodout == 1 && foodtotal != 14) {
-				food[foodtotal] = 32;
-				foodtotal++;
-			} else if (foodout == 0){
-				state = waitfood;
-				break;
-			}
-			for(unsigned char f = 0; f < 15; f++){
-				food[f] -=1;
-			}
-			for(unsigned char hit = 0; hit < 15; hit++){
-				if(position == food[hit]){
-					last = hit;
-					++scores;
-					food[hit] = 0;
+		case display:
+			if(foodout == 1 && gamebool == 1){
+				for(unsigned char q = 0; q <15; q++){
+					LCD_Cursor(food[q]);
+					LCD_WriteData(3);
+					LCD_Cursor_Off;
 				}
+				for(unsigned char q = 0; q <15; q++){
+					LCD_Cursor(poison[q]);
+					LCD_WriteData(5);
+					LCD_Cursor_Off;
+				}
+				for(unsigned char hit = 0; hit < 15; hit++){
+					if(position == food[hit]){
+						last = hit;
+						++scores;
+						food[hit] = rand() % 33;
+						} else if ((initial-1) == food[hit]){
+						last = hit;
+						++scores;
+						food[hit] = rand() % 33;;
+					}
+					
+				}
+				for(unsigned char s = 0; s <15; s++){
+					if((food[s]-1)==0){
+						food[s] = 32;
+					}
+					if(food[s] > 1){
+						food[s]--;
+					} else if(food[s] == 1 || food[s] == 0){
+						food[s] = 0;
+					}
+				}
+				state = shift;
+			} else {
+				state = waitfood;
 			}
-			state = foodtime;
+			break;
+			case shift:
+			if(foodout == 1 && gamebool == 1){
+				for(unsigned char q = 0; q <15; q++){
+					LCD_Cursor(food[q]+1);
+					LCD_WriteData(' ');
+					LCD_Cursor_Off;
+				}
+				for(unsigned char hit = 0; hit < 15; hit++){
+					if(position == food[hit]){
+						last = hit;
+						++scores;
+						food[hit] = rand() % 33;
+						} else if ((initial-1) == food[hit]){
+						last = hit;
+						++scores;
+						food[hit] = rand() % 33;
+					}
+					
+				}
+				state = display;
+			} else {
+				state = waitfood;
+			}
 			break;
 	}
 	switch(state){
 		case waitfood:
-			for(unsigned char d = 0; d < 15; d++){
-				food[d] = 0;
-			}
-			foodtotal = 0;
 			break;
-		case foodtime:
-			for(unsigned char g = 0; g < 15; g++){
-				if(food[g] == 0){
-					LCD_Cursor(position+1);
-					LCD_WriteData(' ');
-					LCD_Cursor_Off();
-				} else {
-					LCD_Cursor(food[g]);
-					LCD_WriteData(1);
-					LCD_Cursor_Off();
-				}
-			}
-			for(unsigned char h = 0; h < 15; h++){
-				LCD_Cursor(food[h]+1);
-				LCD_WriteData(' ');
-				LCD_Cursor_Off;
-			}
+		case display:
 			break;
-		default:
-			state = waitfood;
+		case shift:
+			break;
 	}
 	return state;
 }
