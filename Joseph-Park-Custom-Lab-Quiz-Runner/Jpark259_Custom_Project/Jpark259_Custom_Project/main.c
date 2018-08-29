@@ -8,12 +8,13 @@
 #include "menu.h"
 #include "gameplay.h"
 #include "food.h"
+#include "joystick.h"
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
 
 unsigned short numTasks = 2;
-unsigned char A = 0x00;
+
 
 unsigned long int findGCD(unsigned long int a, unsigned long int b)
 {
@@ -51,14 +52,16 @@ unsigned char in;
 
 int main(void)
 {
-	DDRA = 0xFF; PORTA = 0x00;
+	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00; // PORTB set to output, outputs init 0s
-	DDRC = 0xF0; PORTC = 0x0F; // PC7..4 outputs init 0s, PC3..0 inputs init 1s
+	DDRC = 0xFF; PORTC = 0x00; // PC7..4 outputs init 0s, PC3..0 inputs init 1s
 	DDRD = 0xFF; PORTD = 0xFF;
 	static task task1, gameplay,food, task2;
 	time_t t;
 	srand((unsigned) time(&t));
 	LCD_build();
+	ADC_init();
+	
 	task1.state = keypad_state;
 	task1.period = 250;
 	task1.elapsedTime = 0;
@@ -78,13 +81,15 @@ int main(void)
 
 	in = 0;
 	
-	task *tasks[] = { &task1, &gameplay, &food };
+	task *tasks[] = { &task1, &gameplay,&food };
 	
 	TimerSet(1);
 	TimerOn();
 	unsigned short i;
 	while(1) {
-		A = ~PINA;
+		
+		
+		
 		for ( i = 0; i < 3; i++ ) {
 			// Task is ready to tick
 			if ( tasks[i]->elapsedTime == tasks[i]->period ) {

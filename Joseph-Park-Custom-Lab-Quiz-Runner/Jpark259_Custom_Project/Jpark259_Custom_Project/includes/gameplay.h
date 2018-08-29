@@ -1,5 +1,6 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
+#include "joystick.h"
 
 enum game_states {wait,player,movement,lose,clears} game_state = 0;
 #define gametime 40
@@ -15,7 +16,7 @@ unsigned char scores = 0;
 unsigned char index = 32;
 	
 //Time for round
-unsigned char i,j = 0;
+unsigned char itime,j = 0;
 	
 // FOR PLAYER
 unsigned char jump = 0;
@@ -23,10 +24,19 @@ unsigned char position = 1;
 unsigned char initial = 1;
 unsigned char lastlocation = 0;
 unsigned char currlocation = 0;
+unsigned char output = 0;
+unsigned short ymove = 0;
+unsigned short xmove = 0;
+unsigned short initialy = 0;
+unsigned short initialx = 0;
+
+
 
 int gameplay_tick(int state){
 	switch(state){
 		case wait:
+		initialy = joystick_Inity();
+		initialx = joystick_Initx();
 			if(gamebool == 1){
 				state = player;
 			} else {
@@ -36,32 +46,29 @@ int gameplay_tick(int state){
 		case player:
 			foodout = 1;
 			state = movement;
+			
 			break;
 		case movement:
 			if(gamebool == 1){
-				x = GetKeypadKey();
-				switch(x){
-					case '2':
-						if(initial <= 32 && initial >= 17){
-							position -= 16;
-						}
-					break;
-					case'5':
-						if(initial >= 1 && initial <= 16){
-							position += 16;
-						}
-					break;
-					case'6':
-						if(initial < 32){
-							position += 1;
-						}
-					break;
-					case'4':
-						if(initial > 1){
-							position -= 1;
-						}
-					break;
+				ADMUX = REF_AVCC | 0x00;
+				waiter(300);
+				xmove = ADC;
+				ADMUX = REF_AVCC | 0x01;
+				waiter(300);
+				ymove = ADC;
+				if ((xmove < (initialx - 10))&& (position != 32) ) {
+					position += 1;
 				}
+				if ((xmove > (initialx + 10)) &&(position != 1)) {
+					position -= 1;
+				}
+				if ((ymove < (initialy - 10)) && (position >= 1 && position <= 16)) {
+					position += 16;
+				}
+				if ((ymove > (initialy + 10)) && (position >=17 && position <= 32)) {
+					position -= 16;
+				}
+				
 				state = movement;
 			} else if (gamebool == 0){
 				state = lose;
@@ -69,9 +76,9 @@ int gameplay_tick(int state){
 			break;
 		case lose:
 		foodout = 0;
-		i++;
-		if(i == 10){
-			i = 0;
+		itime++;
+		if(itime == 10){
+			itime = 0;
 			state = clears;
 		} else {
 			state = lose;

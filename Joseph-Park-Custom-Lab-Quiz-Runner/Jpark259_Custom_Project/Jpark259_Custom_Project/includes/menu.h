@@ -9,11 +9,12 @@ unsigned char selection = 0;
 unsigned char ind = 0;
 char reading[25];
 unsigned char gamebool = 0;
+#define button ~PINA & 0x01
 
 int keypad_tick (int state) {
 	switch(state) {
 		case title:
-		if(selection == 4){
+		if(button){
 			selection = 0;
 			state = menu;
 			} else {
@@ -52,6 +53,7 @@ int keypad_tick (int state) {
 		case loses:		
 			t++;
 			if(t == 10){
+				t = 0;
 				state = menu;
 			} else{
 				state = loses;
@@ -88,10 +90,10 @@ int keypad_tick (int state) {
 		LCD_DisplayString(1,"A-Play! B-Score  C-Character");
 		LCD_Cursor_Off();
 		x = GetKeypadKey();
-		switch (x) {
+		switch (button) {
 			case '\0':
 			break;
-			case 'A':
+			case 0x01:
 			LCD_ClearScreen();
 			selection = 1;
 			
