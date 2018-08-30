@@ -93,11 +93,12 @@ int keypad_tick (int state) {
 		case game:
 		break;
 		case score:
-		LCD_Cursor(1);
+		LCD_DisplayString(1,"Highest Score:");
+		LCD_Cursor(17);
 		trans = eeprom_read_byte(0)%10;
 		trans2 = eeprom_read_byte(0)/10;	
 		LCD_WriteData(trans2 + '0');
-		LCD_Cursor(2);
+		LCD_Cursor(18);
 		LCD_WriteData(trans + '0');
 		LCD_Cursor_Off();
 		break;

@@ -51,6 +51,18 @@ void LCD_poison(){
 	LCD_WriteData(0x11);      //Load row 8 data
 }
 
+void LCD_hole(){
+	LCD_WriteCommand(0x60);       //Load the location where we want to store
+	LCD_WriteData(0x1F);      //Load row 1 data
+	LCD_WriteData(0x10);      //Load row 2 data
+	LCD_WriteData(0x10);      //Load row 3 data
+	LCD_WriteData(0x10);      //Load row 4 data
+	LCD_WriteData(0x10);      //Load row 5 data
+	LCD_WriteData(0x10);      //Load row 6 data
+	LCD_WriteData(0x10);      //Load row 7 data
+	LCD_WriteData(0x1F);      //Load row 8 data
+}
+
 void LCD_ClearScreen(void) {
    LCD_WriteCommand(0x01);
 }

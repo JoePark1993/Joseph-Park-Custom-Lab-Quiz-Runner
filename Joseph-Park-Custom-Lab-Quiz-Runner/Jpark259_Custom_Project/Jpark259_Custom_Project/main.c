@@ -63,6 +63,7 @@ int main(void)
 	LCD_man();
 	LCD_food();
 	LCD_poison();
+	LCD_hole();
 	ADC_init();
 	//eeprom_write_byte(0,0);
 	if(eeprom_read_byte(0)==255){

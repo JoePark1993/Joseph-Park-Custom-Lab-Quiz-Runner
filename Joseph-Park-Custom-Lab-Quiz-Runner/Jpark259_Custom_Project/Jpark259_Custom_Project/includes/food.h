@@ -4,7 +4,7 @@
 
 enum food_states {waitfood,display,losescore, shift} food_state = 0;
 unsigned char foodtotal = 14;
-unsigned char food[15] = {5,12,0,0,0,0,15,0,0,0,30,0,0,20,0};
+unsigned char food[15] = {5,12,0,0,10,0,8,0,0,7,30,3,0,20,0};
 unsigned char poison[15] = {15,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 unsigned char last = 0;
 unsigned char scores = 0;
@@ -25,7 +25,7 @@ int food_tick(int state){
 			if(foodout == 0){
 				for(unsigned char f = 0; f<15;f++){
 					if((srand(seed)%50)==1){
-						food[f] = (rand()%33);
+						//food[f] = (rand()%33);
 					} else {
 					food[f] = 0;
 					}
@@ -76,11 +76,11 @@ int food_tick(int state){
 						last = hit;
 						if(scores >= 9){
 							scores=0;
-							++scores2;
-							scorestot++;
+							//++scores2;
+							//scorestot++;
 						} else {
-							++scores;
-							++scorestot;
+							//++scores;
+							//++scorestot;
 						}
 						food[hit] = rand() % 33;
 						} else if ((initial-1) == food[hit]){
@@ -203,12 +203,15 @@ int food_tick(int state){
 		case waitfood:
 			break;
 		case display:
+			LCD_Cursor(2);
+			LCD_WriteData(4);
+			LCD_Cursor_Off();
 			break;
 		case losescore:
-			PORTB = 0x01;
-			LCD_Cursor(1);
+			LCD_DisplayString(1,"Your Score:");
+			LCD_Cursor(12);
 			LCD_WriteData(scores2 + '0');
-			LCD_Cursor(2);
+			LCD_Cursor(13);
 			LCD_WriteData(scores + '0');
 			LCD_Cursor_Off();
 			break;
