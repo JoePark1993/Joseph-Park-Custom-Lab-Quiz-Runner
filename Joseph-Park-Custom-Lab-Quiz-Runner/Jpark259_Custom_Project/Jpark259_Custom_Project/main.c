@@ -13,6 +13,7 @@
 #include <time.h>
 #include <stdlib.h>
 
+
 unsigned short numTasks = 2;
 
 
@@ -59,9 +60,14 @@ int main(void)
 	static task task1, gameplay,food, task2;
 	time_t t;
 	srand((unsigned) time(&t));
-	LCD_build();
+	LCD_man();
+	LCD_food();
+	LCD_poison();
 	ADC_init();
-	
+	//eeprom_write_byte(0,0);
+	if(eeprom_read_byte(0)==255){
+		eeprom_write_byte(0,0);
+	}
 	task1.state = keypad_state;
 	task1.period = 250;
 	task1.elapsedTime = 0;

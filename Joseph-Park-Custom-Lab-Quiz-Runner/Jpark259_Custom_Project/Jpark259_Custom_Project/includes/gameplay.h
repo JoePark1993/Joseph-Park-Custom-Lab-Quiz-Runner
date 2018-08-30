@@ -1,6 +1,7 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
 #include "joystick.h"
+#include <avr/eeprom.h>
 
 enum game_states {wait,player,movement,lose,clears} game_state = 0;
 #define gametime 40
@@ -10,7 +11,6 @@ enum game_states {wait,player,movement,lose,clears} game_state = 0;
 
 //FOOD RELEASE
 unsigned char foodout = 0;
-unsigned char scores = 0;
 
 //OBJECT SCROLLING & LOCATION
 unsigned char index = 32;
@@ -49,29 +49,38 @@ int gameplay_tick(int state){
 			
 			break;
 		case movement:
-			if(gamebool == 1){
-				ADMUX = REF_AVCC | 0x00;
-				waiter(300);
-				xmove = ADC;
-				ADMUX = REF_AVCC | 0x01;
-				waiter(300);
-				ymove = ADC;
-				if ((xmove < (initialx - 10))&& (position != 32) ) {
-					position += 1;
-				}
-				if ((xmove > (initialx + 10)) &&(position != 1)) {
-					position -= 1;
-				}
-				if ((ymove < (initialy - 10)) && (position >= 1 && position <= 16)) {
-					position += 16;
-				}
-				if ((ymove > (initialy + 10)) && (position >=17 && position <= 32)) {
-					position -= 16;
+			if(reset){
+				foodout = 0;
+				gamebool = 0;
+				state = wait;
+				break;
+			} else {
+				if(gamebool == 1){
+					ADMUX = REF_AVCC | 0x00;
+					waiter(300);
+					xmove = ADC;
+					ADMUX = REF_AVCC | 0x01;
+					waiter(300);
+					ymove = ADC;
+					if ((xmove < (initialx - 10))&& (position != 32) ) {
+						position += 1;
+					}
+					if ((xmove > (initialx + 10)) &&(position != 1)) {
+						position -= 1;
+					}
+					if ((ymove < (initialy - 10)) && (position >= 1 && position <= 16)) {
+						position += 16;
+					}
+					if ((ymove > (initialy + 10)) && (position >=17 && position <= 32)) {
+						position -= 16;
+					}
+				
+				
+					state = movement;
+				} else if (gamebool == 0){
+					state = lose;
 				}
 				
-				state = movement;
-			} else if (gamebool == 0){
-				state = lose;
 			}
 			break;
 		case lose:
@@ -105,7 +114,6 @@ int gameplay_tick(int state){
 			initial = position;
 			break;
 		case lose:
-			LCD_DisplayString(1,"LOSE");
 			break;
 		case clears:
 			initial = 1;

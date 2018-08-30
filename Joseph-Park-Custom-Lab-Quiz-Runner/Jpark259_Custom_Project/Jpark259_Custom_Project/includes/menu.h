@@ -1,27 +1,25 @@
 #ifndef MENU_H
 #define MENU_H
-
-char msg[] = "Welcome to The Game. Press 1 to start!";
-enum keypad_states {title,menu,game,score,game2,loses} keypad_state = 0;
+#include <avr/eeprom.h>
+char msg[] = "Welcome to Package Collector. Press Button 1 to start!";
+enum keypad_states {menu,game,score,game2,loses} keypad_state = 0;
 unsigned char x;
 unsigned char t;     //Time for lose screen
 unsigned char selection = 0;
 unsigned char ind = 0;
 char reading[25];
 unsigned char gamebool = 0;
-#define button ~PINA & 0x01
+unsigned char trans = 0;
+unsigned char trans2 = 0;
+unsigned char trans3 = 0;
+#define button ~PINA &0x0C
+#define button2 ~PINA & 0x18
+#define reset ~PINA & 0x20
 
 int keypad_tick (int state) {
 	switch(state) {
-		case title:
-		if(button){
-			selection = 0;
-			state = menu;
-			} else {
-			state = title;
-		}
-		break;
 		case menu:
+		gamebool = 0;
 		if(selection == 1){
 			selection = 0;
 			gamebool = 1;
@@ -46,6 +44,11 @@ int keypad_tick (int state) {
 		break;
 		case score:
 		selection = 0;
+			if(button){
+				state = menu;
+			} else {
+				state = score;
+			}
 		break;
 		case game2:
 		selection = 0;
@@ -65,40 +68,20 @@ int keypad_tick (int state) {
 	}
 	
 	switch(state) {
-		case title:
-		x = GetKeypadKey();
-		switch(x){
-			case '/0':
-			break;
-			case '1':
-			x = 0;
-			selection = 4;
-			break;
-			default:
-			strncpy(reading, msg + ind, 16);
-			reading[16] = '\0';
-			LCD_ClearScreen();
-			LCD_DisplayString(1, (const) reading);
-			ind++;
-			ind = ind % 23;
-			
-			break;
-		}
-		
-		break;
 		case menu:
-		LCD_DisplayString(1,"A-Play! B-Score  C-Character");
+		LCD_DisplayString(1,"Button 3-Play!  Button 2-Score");
 		LCD_Cursor_Off();
 		x = GetKeypadKey();
-		switch (button) {
+		switch (button2) {
 			case '\0':
 			break;
-			case 0x01:
+			case 0x10:
 			LCD_ClearScreen();
 			selection = 1;
 			
 			break;
-			case 'B':
+			case 0x08:
+			LCD_ClearScreen();
 			selection = 2;
 			break;
 			case 'C':
@@ -110,7 +93,13 @@ int keypad_tick (int state) {
 		case game:
 		break;
 		case score:
-		LCD_DisplayString(1,"SCORE");
+		LCD_Cursor(1);
+		trans = eeprom_read_byte(0)%10;
+		trans2 = eeprom_read_byte(0)/10;	
+		LCD_WriteData(trans2 + '0');
+		LCD_Cursor(2);
+		LCD_WriteData(trans + '0');
+		LCD_Cursor_Off();
 		break;
 		case game2:
 		LCD_DisplayString(1,"Character");
@@ -118,7 +107,7 @@ int keypad_tick (int state) {
 		case loses:
 		break;
 		default:
-		state = title;
+		state = menu;
 		break;
 	}
 	
