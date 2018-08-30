@@ -5,7 +5,7 @@
 enum food_states {waitfood,display,losescore, shift} food_state = 0;
 unsigned char foodtotal = 14;
 unsigned char food[15] = {5,12,0,0,10,0,8,0,0,7,30,3,0,20,0};
-unsigned char poison[15] = {15,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+unsigned char poison[15] = {15,25,0,0,0,0,0,0,0,0,0,0,0,0,0};
 unsigned char last = 0;
 unsigned char scores = 0;
 unsigned char scores2 = 0;
