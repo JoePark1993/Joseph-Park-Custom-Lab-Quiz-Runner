@@ -17,18 +17,6 @@
 unsigned short numTasks = 2;
 
 
-unsigned long int findGCD(unsigned long int a, unsigned long int b)
-{
-	unsigned long int c;
-	while(1){
-		c = a%b;
-		if(c==0){return b;}
-		a = b;
-		b = c;
-	}
-	return 0;
-}
-
 typedef struct _task {
 	/*Tasks should have members that include: state, period,
 		a measurement of elapsed time, and a function pointer.*/
@@ -57,7 +45,7 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00; // PORTB set to output, outputs init 0s
 	DDRC = 0xFF; PORTC = 0x00; // PC7..4 outputs init 0s, PC3..0 inputs init 1s
 	DDRD = 0xFF; PORTD = 0xFF;
-	static task task1, gameplay,food, task2;
+	static task task1, gameplay,food;
 	time_t t;
 	srand((unsigned) time(&t));
 	LCD_man();
