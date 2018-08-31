@@ -23,16 +23,6 @@ int food_tick(int state){
 			scores = 0;
 			scores2 = 0;
 			if(foodout == 0){
-				for(unsigned char f = 0; f<15;f++){
-					if((srand(seed)%50)==1){
-						//food[f] = (rand()%33);
-					} else {
-					food[f] = 0;
-					}
-					if ((srand(nseed)%20) == 1){
-						//poison[f] = (rand() % 33);
-					} 
-				}
 				for(unsigned char poi = 0; poi < 15; poi++){
 					for(unsigned char pois = 0;pois < 15; pois++){
 						if(poison[poi] == food[pois]){
@@ -85,7 +75,6 @@ int food_tick(int state){
 						food[hit] = rand() % 33;
 						} else if ((initial-1) == food[hit]){
 						last = hit;
-						//++scores;
 						food[hit] = rand() % 33;
 					}
 					
