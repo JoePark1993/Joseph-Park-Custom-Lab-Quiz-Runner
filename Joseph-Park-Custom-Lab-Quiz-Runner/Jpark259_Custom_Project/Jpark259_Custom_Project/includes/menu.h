@@ -15,6 +15,7 @@ unsigned char trans3 = 0;
 #define button ~PINA &0x0C
 #define button2 ~PINA & 0x18
 #define reset ~PINA & 0x20
+unsigned char it = 0;
 
 int keypad_tick (int state) {
 	switch(state) {
@@ -43,8 +44,10 @@ int keypad_tick (int state) {
 		}
 		break;
 		case score:
+		it++;
 		selection = 0;
-			if(button){
+			if(it == 10){
+				it = 0;
 				state = menu;
 			} else {
 				state = score;
@@ -55,7 +58,7 @@ int keypad_tick (int state) {
 		break;
 		case loses:		
 			t++;
-			if(t == 10){
+			if(t == 6){
 				t = 0;
 				state = menu;
 			} else{
