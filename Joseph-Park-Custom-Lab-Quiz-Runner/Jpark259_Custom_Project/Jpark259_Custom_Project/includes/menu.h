@@ -74,7 +74,6 @@ int keypad_tick (int state) {
 		case menu:
 		LCD_DisplayString(1,"Button 3-Play!  Button 2-Score");
 		LCD_Cursor_Off();
-		x = GetKeypadKey();
 		switch (button2) {
 			case '\0':
 			break;
