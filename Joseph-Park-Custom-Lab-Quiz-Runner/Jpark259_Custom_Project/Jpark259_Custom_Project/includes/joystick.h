@@ -5,7 +5,6 @@
 
 //Look up mux value www.pjrc.com/teensy/adc.html
 #define REF_AVCC ( 1 << REFS0 )               
-#define REF_INIT ( 1 << REFS0 ) | ( 1 << REFS1 )
 
 void ADC_init() {
 	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
@@ -31,11 +30,11 @@ unsigned short joystick_Initx(){
 
 unsigned short joystick_Inity(){
 	unsigned short initial;
-		ADMUX = REF_AVCC | 0x01; //x
-		waiter(500);
-		initial = ADC;
+	ADMUX = REF_AVCC | 0x01; //x
+	waiter(500);
+	initial = ADC;
 		
-		return initial;
+	return initial;
 }
 
 #endif
