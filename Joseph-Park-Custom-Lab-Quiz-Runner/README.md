@@ -1,2 +1,2 @@
-# Joseph-Park-Custom-Lab-Quiz-Runner
-Side scrolling runner
+# Joseph-Park-Custom-Lab-Package-Collector
+Side scroller
